@@ -4,9 +4,11 @@ from dotenv import dotenv_values
 
 config = dotenv_values("../.env")
 TOKEN = config["TOKEN_BOT_DISCORD"]
+CHANNEL_ID = config["CHANNEL_ID_JOIN"]
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
 bot: commands.Bot = commands.Bot(command_prefix="-", intents=intents)
 
@@ -16,11 +18,11 @@ async def on_ready():
     print("We are running!")
 
 
-# @bot.event
-# async def on_member_join(member):
-#     channel = bot.get_channel(YOUR_CHANNEL_ID)
-#     if channel:
-#         await channel.send(f'¡Bienvenido al servidor, {member.mention}! 🎉')
+@bot.event
+async def on_member_join(member):
+    channel = bot.get_channel(int(CHANNEL_ID))
+    if channel:
+        await channel.send(f'¡Bienvenido al servidor, {member.mention}! 🎉')
 
 
 @bot.command()
