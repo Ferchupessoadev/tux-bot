@@ -8,6 +8,14 @@
 pipenv install
 ```
 
+## environment variables
+
+```bash
+cp .env.example .env
+```
+
+change the values in .env
+
 ## how to run
 
 ```bash
