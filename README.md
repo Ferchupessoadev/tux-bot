@@ -2,24 +2,34 @@
 
 ![tux Bot](./tuxbot.png)
 
-## how to setup(you need pipenv)
+## How to setup
+
+first, clone the repo with the following command
 
 ```bash
-pipenv install
+git clone https://github.com/Ferchupessoadev/tux-bot
 ```
 
-## environment variables
+then, create a virtual environment with the following commands and install the dependencies
+
+```bash
+cd tux-bot
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+then, create a config file with the following command
 
 ```bash
 cp .env.example .env
 ```
 
-change the values in .env
+then, edit the config file with your own values
 
-## how to run
+finally, run the bot with the following commands
 
 ```bash
-pipenv shell
-cd src/
-python3 index.py
+cd src
+python index.py
 ```
