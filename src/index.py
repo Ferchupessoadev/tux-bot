@@ -46,11 +46,12 @@ def get_uptime():
     with open('/proc/uptime', 'r') as f:
         uptime_seconds = float(f.readline().split()[0])
 
-    uptime_hours = uptime_seconds // 3600
+    uptime_days = uptime_seconds // (24 * 3600)
+    uptime_hours = (uptime_seconds % (24 * 3600)) // 3600
     uptime_minutes = (uptime_seconds % 3600) // 60
     uptime_seconds = uptime_seconds % 60
 
-    return int(uptime_hours), int(uptime_minutes), int(uptime_seconds)
+    return int(uptime_days), int(uptime_hours), int(uptime_minutes), int(uptime_seconds)
 
 
 @bot.command()
@@ -58,12 +59,12 @@ async def neofetch(ctx):
     result = subprocess.run(['free', '-m'], stdout=subprocess.PIPE, text=True)
     lines = result.stdout.split('\n')
     distro = get_linux_distro()
-    hours, minutes, seconds = get_uptime()
+    days, hours, minutes, seconds = get_uptime()
     for line in lines:
         if 'Mem:' in line:
             parts = line.split()
             total, used, free = map(int, parts[1:4])
-            await ctx.send(f'OS: {distro}\nRAM: {used}MB/{total}MB\nTiempo encendido: {hours}h {minutes}m {seconds}s')
+            await ctx.send(f'OS: {distro}\nRAM: {used}MB/{total}MB\nTiempo encendido: {days}d {hours}h {minutes}m {seconds}s')
 
 
 bot.run(TOKEN)
