@@ -42,16 +42,28 @@ def get_linux_distro():
         return "No se pudo determinar la distribución de Linux"
 
 
+def get_uptime():
+    with open('/proc/uptime', 'r') as f:
+        uptime_seconds = float(f.readline().split()[0])
+
+    uptime_hours = uptime_seconds // 3600
+    uptime_minutes = (uptime_seconds % 3600) // 60
+    uptime_seconds = uptime_seconds % 60
+
+    return int(uptime_hours), int(uptime_minutes), int(uptime_seconds)
+
+
 @bot.command()
 async def neofetch(ctx):
     result = subprocess.run(['free', '-m'], stdout=subprocess.PIPE, text=True)
     lines = result.stdout.split('\n')
     distro = get_linux_distro()
+    hours, minutes, seconds = get_uptime()
     for line in lines:
         if 'Mem:' in line:
             parts = line.split()
             total, used, free = map(int, parts[1:4])
-            await ctx.send(f'{distro}\nRAM: {used}MB/{total}MB')
+            await ctx.send(f'OS: {distro}\nRAM: {used}MB/{total}MB\nTiempo encendido: {hours}h {minutes}m {seconds}s')
 
 
 bot.run(TOKEN)
