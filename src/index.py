@@ -31,15 +31,27 @@ async def ping(ctx):
     await ctx.send(f"Pong! {round(bot.latency * 1000)}ms")
 
 
+def get_linux_distro():
+    try:
+        with open("/etc/os-release") as f:
+            lines = f.readlines()
+        for line in lines:
+            if line.startswith("PRETTY_NAME"):
+                return line.split("=")[1].strip().replace('"', '')
+    except FileNotFoundError:
+        return "No se pudo determinar la distribución de Linux"
+
+
 @bot.command()
 async def neofetch(ctx):
     result = subprocess.run(['free', '-m'], stdout=subprocess.PIPE, text=True)
     lines = result.stdout.split('\n')
+    distro = get_linux_distro()
     for line in lines:
         if 'Mem:' in line:
             parts = line.split()
             total, used, free = map(int, parts[1:4])
-            await ctx.send(f'RAM: {used}MB/{total}MB')
+            await ctx.send(f'{distro}\nRAM: {used}MB/{total}MB')
 
 
 bot.run(TOKEN)
