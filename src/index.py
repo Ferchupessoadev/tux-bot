@@ -6,6 +6,7 @@ from dotenv import dotenv_values
 config = dotenv_values("../.env")
 TOKEN = config["TOKEN_BOT_DISCORD"]
 CHANNEL_ID = config["CHANNEL_ID_JOIN"]
+ID_CHANNEL_REMOVE = config["ID_CHANNEL_REMOVE"]
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -65,6 +66,13 @@ async def neofetch(ctx):
             parts = line.split()
             total, used, free = map(int, parts[1:4])
             await ctx.send(f'OS: {distro}\nRAM: {used}MB/{total}MB\nTiempo encendido: {days}d {hours}h {minutes}m {seconds}s')
+
+
+@bot.event
+async def on_member_remove(member):
+    channel = bot.get_channel(ID_CHANNEL_REMOVE)
+    if channel:
+        await channel.send(f'{member.mention} abandono el servidor')
 
 
 bot.run(TOKEN)
