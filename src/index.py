@@ -70,7 +70,7 @@ async def neofetch(ctx):
 
 @bot.event
 async def on_member_remove(member):
-    channel = bot.get_channel(ID_CHANNEL_REMOVE)
+    channel = bot.get_channel(int(ID_CHANNEL_REMOVE))
     if channel:
         await channel.send(f'{member.mention} abandono el servidor')
 
