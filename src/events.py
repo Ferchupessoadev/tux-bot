@@ -1,10 +1,12 @@
 from discord.ext import commands
+from tasks import setup_tasks
 
 
 def setup_events(bot: commands.Bot, config):
     @bot.event
     async def on_ready():
         print("We are running!")
+        setup_tasks(bot, config)
 
     @bot.event
     async def on_member_join(member):
