@@ -16,4 +16,4 @@ def setup_events(bot: commands.Bot, config):
     async def on_member_remove(member):
         channel = bot.get_channel(int(config["ID_CHANNEL_REMOVE"]))
         if channel:
-            await channel.send(f'{member.mention} abandonó el servidor')
+            await channel.send(f'{member} abandonó el servidor')
