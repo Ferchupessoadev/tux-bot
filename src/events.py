@@ -4,7 +4,7 @@ from discord.ext import commands
 def setup_events(bot: commands.Bot, config):
     @bot.event
     async def on_ready():
-        print("We are running!")
+        pass
 
     @bot.event
     async def on_member_join(member):
@@ -17,3 +17,8 @@ def setup_events(bot: commands.Bot, config):
         channel = bot.get_channel(int(config["ID_CHANNEL_REMOVE"]))
         if channel:
             await channel.send(f'{member} abandonó el servidor')
+
+    @bot.event
+    async def on_command_error(ctx, error):
+        if isinstance(error, commands.CommandNotFound):
+            await ctx.send("Comando no encontrado.")

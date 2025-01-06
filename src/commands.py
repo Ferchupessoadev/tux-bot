@@ -1,23 +1,37 @@
-import subprocess
 from discord.ext import commands
-from utils import get_linux_distro, get_uptime
+import utils
+import discord
+import sys
 
 
-def setup_commands(bot: commands.Bot):
-    @bot.command()
+def setup_commands(bot: commands.Bot, config):
+    @bot.command(help="Muestra la latencia del bot")
     async def ping(ctx):
-        await ctx.send(f"Pong! {round(bot.latency * 1000)}ms")
+        await ctx.send(f":ping_pong: **pong**: Latencia `{round(bot.latency * 1000)}ms`")
 
-    @bot.command()
+    @bot.command(help="Informacion del bot")
     async def neofetch(ctx):
-        result = subprocess.run(
-            ['free', '-m'], stdout=subprocess.PIPE, text=True)
-        lines = result.stdout.split('\n')
-        distro = get_linux_distro()
-        days, hours, minutes, seconds = get_uptime()
+        distribucion = utils.get_linux_distro()
+        uptime = utils.get_uptime()
 
-        for line in lines:
-            if 'Mem:' in line:
-                parts = line.split()
-                total, used, free = map(int, parts[1:4])
-                await ctx.send(f'OS: {distro}\nRAM: {used}MB/{total}MB\nTiempo encendido: {days}d {hours}h {minutes}m {seconds}s')
+        description = f"""
+
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        :robot: **Nombre:** `{bot.user.name}`
+        :penguin: **Distribución:** `{distribucion}`
+        :computer: **Host**: `{utils.get_username()}`@`{utils.get_hostname()}`
+        :stopwatch: **Uptime:** `{uptime[0]}d {uptime[1]}h {uptime[2]}m {uptime[3]}s`
+        :battery: **RAM**: `{utils.get_ram()}`
+        :book: **Python**: `V{sys.version.split()[0]}`
+        :books: **discord.py** `V{discord.__version__}`
+        ━━━━━━━━━━━━━━━━━━━━━━━
+        """
+        embed = discord.Embed(
+            title="Neofetch",
+            description=description,
+            color=discord.Color.green(),
+        )
+
+        embed.set_thumbnail(url=bot.user.avatar.url)
+
+        await ctx.send(embed=embed)

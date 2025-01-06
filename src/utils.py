@@ -1,3 +1,6 @@
+import subprocess
+
+
 def get_linux_distro():
     try:
         with open("/etc/os-release") as f:
@@ -19,3 +22,23 @@ def get_uptime():
     uptime_seconds = uptime_seconds % 60
 
     return int(uptime_days), int(uptime_hours), int(uptime_minutes), int(uptime_seconds)
+
+
+def get_total_ram():
+    return subprocess.check_output(['free', '-h']).decode('utf-8').strip().split()[7]
+
+
+def get_free_ram():
+    return subprocess.check_output(['free', '-h']).decode('utf-8').strip().split()[8]
+
+
+def get_ram():
+    return f"{get_free_ram()}/{get_total_ram()}"
+
+
+def get_hostname():
+    return subprocess.check_output(['hostname']).decode('utf-8').strip()
+
+
+def get_username():
+    return subprocess.check_output(['whoami']).decode('utf-8').strip()
