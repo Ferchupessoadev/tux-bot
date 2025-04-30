@@ -10,7 +10,6 @@ def setup_tasks(bot, config):
     async def cron_job_youtube():
         link = latest_video_link(bot, config)
 
-        print("Petición")
         channel = bot.get_channel(int(config["CHANNEL_ID_YOUTUBE_DISCORD"]))
         if channel and link != bot.latest_video_link:
             bot.latest_video_link = link
