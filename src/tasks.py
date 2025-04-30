@@ -1,13 +1,23 @@
 from discord.ext import tasks
-from utils_youtube import fetch_latest_content
+from utils_youtube import latest_video_link
 
 
 def setup_tasks(bot, config):
-    bot.latest_video = fetch_latest_content(
-        config["CHANNEL_ID_YOUTUBE"], config)
 
-    @tasks.loop(seconds=50)
+    bot.latest_video_link = latest_video_link(bot, config)
+
+    @tasks.loop(seconds=3)
     async def cron_job_youtube():
-        channel = bot.get_channel(int(config["ID_CHANNEL_REMOVE"]))
+        link = latest_video_link(bot, config)
 
-        await channel.send(bot.latest_video)
+        print("Petición")
+        channel = bot.get_channel(int(config["CHANNEL_ID_YOUTUBE_DISCORD"]))
+        if channel and link != bot.latest_video_link:
+            bot.latest_video_link = link
+            await channel.send(f"""
+            @here
+            :arrow_right: **Nuevo video de YouTube!**
+            {link}
+            """)
+
+    cron_job_youtube.start()
