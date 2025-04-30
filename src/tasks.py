@@ -6,7 +6,7 @@ def setup_tasks(bot, config):
 
     bot.latest_video_link = latest_video_link(bot, config)
 
-    @tasks.loop(seconds=3)
+    @tasks.loop(seconds=60)
     async def cron_job_youtube():
         link = latest_video_link(bot, config)
 
