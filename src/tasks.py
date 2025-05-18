@@ -14,7 +14,7 @@ def setup_tasks(bot, config):
         if channel and link != bot.latest_video_link:
             bot.latest_video_link = link
             await channel.send(f"""
-            @here\n **Nuevo video de YouTube!** \n{link}
+            @here\n**¡Hey!, Hay algo Nuevo en el Canal de YouTube.  No te lo pierdas!**\n{link}
             """)
 
     cron_job_youtube.start()
