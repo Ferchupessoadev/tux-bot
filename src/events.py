@@ -10,7 +10,7 @@ def setup_events(bot: commands.Bot, config: dict):
 
     @bot.event
     async def on_member_join(member):
-        channel = bot.get_channel(int(config["CHANNEL_ID_YOUTUBE"]))
+        channel = bot.get_channel(int(config["CHANNEL_ID_JOIN"]))
         if channel:
             await channel.send(f"¡Bienvenido al servidor, {member.mention}! 🎉")
 
