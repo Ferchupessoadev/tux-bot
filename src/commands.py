@@ -35,3 +35,29 @@ def setup_commands(bot: commands.Bot, config):
         embed.set_thumbnail(url=bot.user.avatar.url)
 
         await ctx.send(embed=embed)
+
+    @bot.command(help="La rubia")
+    async def rubia(ctx):
+        file = discord.File("./i-love-jesus-from-lec.mp4")
+
+        embed = discord.Embed(
+            title="La rubia(mi novia)",
+            description="Video legendario",
+            color=discord.Color.green()
+        )
+
+        await ctx.send(embed=embed, file=file)
+
+    @bot.command(help="la morena")
+    async def morena(ctx):
+        file = discord.File("./morena.png", filename="morena.png")
+
+        embed = discord.Embed(
+            title="La morena (La novia de la rubia)",
+            description="Qué linda la morena",
+            color=discord.Color.green()
+        )
+
+        embed.set_image(url="attachment://morena.png")
+
+        await ctx.send(embed=embed, file=file)
