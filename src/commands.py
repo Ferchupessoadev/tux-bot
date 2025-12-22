@@ -42,7 +42,6 @@ def setup_commands(bot: commands.Bot, config):
 
         embed = discord.Embed(
             title="La rubia(mi novia)",
-            description="Video legendario",
             color=discord.Color.green()
         )
 
@@ -50,14 +49,11 @@ def setup_commands(bot: commands.Bot, config):
 
     @bot.command(help="la morena")
     async def morena(ctx):
-        file = discord.File("./morena.png", filename="morena.png")
+        file = discord.File("./grok-video-quieres ver el directo conmigo - 4.mp4", filename="morena.mp4")
 
         embed = discord.Embed(
-            title="La morena (La novia de la rubia)",
-            description="Qué linda la morena",
+            title="La morena(mi otra novia que no se entere la rubia)",
             color=discord.Color.green()
         )
-
-        embed.set_image(url="attachment://morena.png")
 
         await ctx.send(embed=embed, file=file)
