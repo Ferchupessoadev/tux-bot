@@ -1,5 +1,6 @@
 from discord.ext import tasks
 from utils_youtube import latest_video_link
+import discord
 
 
 def setup_tasks(bot, config):
@@ -17,4 +18,31 @@ def setup_tasks(bot, config):
             @here\n**¡Hey!, Hay algo Nuevo en el Canal de YouTube.  No te lo pierdas!**\n{link}
             """)
 
+    @tasks.loop(minutes=5)
+    async def update_stats():
+        guild = bot.get_guild(1250455329578418209)
+        if not guild:
+            return
+
+        channel = guild.get_channel(1465398474970370161)
+        if not channel:
+            return
+
+        online_channel = guild.get_channel(1465398551122280518)
+        if not online_channel:
+            return
+
+        total = guild.member_count
+        online = sum(
+            1 for m in guild.members
+            if not m.bot and m.status != discord.Status.offline
+        )
+
+        if online_channel:
+            await online_channel.edit(name=f"🟢 Online: {online}")
+
+        if channel:
+            await channel.edit(name=f"👥 Total: {total}")
+
     cron_job_youtube.start()
+    update_stats.start()

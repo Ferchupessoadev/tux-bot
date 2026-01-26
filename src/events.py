@@ -87,8 +87,16 @@ def setup_events(bot: commands.Bot, config: dict):
     @bot.event
     async def on_member_remove(member):
         channel = bot.get_channel(int(config["ID_CHANNEL_REMOVE"]))
+        avatar_url = member.avatar.url if member.avatar else member.default_avatar.url
         if channel:
-            await channel.send(f"{member} abandonó el servidor")
+            embed = discord.Embed(
+                title="Miembro abandonado",
+                description=f"{member.name} ha abandonado el servidor.",
+                color=discord.Color.red()
+            )
+            embed.set_thumbnail(url=avatar_url)
+            await channel.send(embed=embed)
+
 
     @bot.event
     async def on_command_error(ctx, error):

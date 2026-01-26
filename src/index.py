@@ -16,6 +16,8 @@ intents.messages = True
 intents.guild_messages = True
 intents.guilds = True
 intents.members = True
+intents.presences = True
+intents.voice_states = True
 
 bot: commands.Bot = commands.Bot(
     command_prefix="-", intents=intents, help_command=HelpCommand()
