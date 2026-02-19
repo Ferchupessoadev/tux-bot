@@ -34,7 +34,8 @@ def fetch_latest_content(channel_id, config):
         )
 
     except KeyError as e:
-        print(f"KeyError: No se pudo encontrar la clave '{e.args[0]}' en latest_video")
+        print(
+            f"KeyError: No se pudo encontrar la clave '{e.args[0]}' en latest_video")
 
     except HttpError as e:
         with open("error-log.json", "a") as f:
@@ -55,12 +56,11 @@ def fetch_latest_content(channel_id, config):
     return last_video
 
 
-def latest_video_link(bot, config):
-
+def get_latest_video_link(bot, config):
     channel = bot.get_channel(int(config["CHANNEL_ID_YOUTUBE_DISCORD"]))
 
     data = fetch_latest_content(config["CHANNEL_ID_YOUTUBE"], config)
     video_id = data["snippet"]["resourceId"]["videoId"]
     link = f"https://www.youtube.com/watch?v={video_id}"
 
-    return link
+    return data, link
