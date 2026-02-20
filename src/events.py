@@ -15,34 +15,41 @@ def setup_events(bot: commands.Bot, config: dict):
     @bot.event
     async def on_member_join(member):
         channel = bot.get_channel(int(config["CHANNEL_ID_JOIN"]))
-
         if not channel:
             return
 
-        background = Image.open("fondo-welcome.png").convert("RGBA")
+        role_name = config["ROLE_DEFAULT"]
+        if not role_name:
+            return
+
+        role = discord.utils.get(member.guild.roles, name=role_name)
+        if role:
+            try:
+                if role < member.guild.me.top_role:
+                    await member.add_roles(role, reason="Rol automático al ingresar")
+            except discord.Forbidden:
+                pass
+            except discord.HTTPException:
+                pass
+
+        background = Image.open("fondo-welcome.jpg").convert("RGBA")
         W, H = background.size
 
-        font_title = ImageFont.truetype(
-            "./fonts/FiraCodeNerdFont-Regular.ttf", 80)
-        font_sub = ImageFont.truetype(
-            "./fonts/FiraCodeNerdFont-Regular.ttf", 65)
-        draw = ImageDraw.Draw(background)
-
         # --- Descargar avatar de forma segura ---
-        avatar_url = member.avatar.url if member.avatar else member.default_avatar.url
+        avatar_url = member.display_avatar.url
 
         async with aiohttp.ClientSession() as session:
             async with session.get(avatar_url) as resp:
                 avatar_bytes = await resp.read()
 
         avatar = Image.open(io.BytesIO(avatar_bytes)).convert("RGBA")
-        avatar = avatar.resize((600, 600))
+        avatar = avatar.resize((2300, 2300))
+        border_size = 14
 
         # --- Crear máscara circular ---
         mask = Image.new("L", avatar.size, 0)
         ImageDraw.Draw(mask).ellipse((0, 0, *avatar.size), fill=255)
         avatar.putalpha(mask)
-        border_size = 10
         border = Image.new(
             "RGBA",
             (avatar.width + 2*border_size, avatar.height + 2*border_size),
@@ -59,29 +66,34 @@ def setup_events(bot: commands.Bot, config: dict):
         avatar_y = (H - avatar.height) // 2
         background.paste(avatar, (avatar_x, avatar_y), avatar)
 
-        # --- Escribir textos ---
-        text = "¡Bienvenid@!"
-        text_member = f"{member.name}!"
+        description = (
+            f"**Bienvenido {member.mention}**\n"
+            f"Primero lo primero, lee las <#{config['ID_CHANNEL_RULES']}>\n\n"
+            f"Si tienes alguna duda o sugerencia, escribe en <#{config['ID_CHANNEL_SUGGESTIONS']}>\n"
+            f"¡Esperamos que disfrutes tu estadía!"
+        )
 
-        # -------- Título --------
-        bbox = draw.textbbox((0, 0), text, font=font_title)
-        text_w, text_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
-        draw.text(((W - text_w) / 2, H - text_h - 160),
-                  text, font=font_title, fill="#E74C3C")
+        embed = discord.Embed(
+            description=description,
+            color=discord.Color.green()
+        )
 
-        # -------- Subtítulo --------
-        bbox2 = draw.textbbox((0, 0), text_member, font=font_sub)
-        sub_w, sub_h = bbox2[2] - bbox2[0], bbox2[3] - bbox2[1]
-        draw.text(((W - sub_w) / 2, H - sub_h - 90),
-                  text_member, font=font_sub, fill="#E74C3C")
-
-        # --- Enviar imagen ---
         with io.BytesIO() as image_binary:
-            background.save(image_binary, "PNG")
+            background = background.convert("RGB")
+            background.save(image_binary, "JPEG", quality=75, optimize=True)
             image_binary.seek(0)
+
+            file = discord.File(image_binary, filename="avatar.png")
+            embed.set_image(url="attachment://avatar.png")
+
+            embed.set_footer(
+                text="Tux Bot • Ferchupessoadev",
+                icon_url="https://raw.githubusercontent.com/Ferchupessoadev/tux-bot/refs/heads/main/tuxbot.png")
+
             await channel.send(
-                content=f"¡Bienvenido/a {member.mention}! 🎉",
-                file=discord.File(image_binary, "bienvenida.png")
+                content=f"**Bienvenido {member.mention}**",
+                embed=embed,
+                file=file
             )
 
     @bot.event
@@ -91,14 +103,18 @@ def setup_events(bot: commands.Bot, config: dict):
         if channel:
             embed = discord.Embed(
                 title="Miembro abandonado",
-                description=f"{member.name} ha abandonado el servidor.",
+                description=f"{member.display_name} ha abandonado el servidor.",
                 color=discord.Color.red()
             )
-            embed.set_thumbnail(url=avatar_url)
-            await channel.send(embed=embed)
+            embed.set_image(url=avatar_url)
 
+            embed.set_footer(
+                text="Tux Bot • Ferchupessoadev",
+                icon_url="https://raw.githubusercontent.com/Ferchupessoadev/tux-bot/refs/heads/main/tuxbot.png")
+
+            await channel.send(embed=embed)
 
     @bot.event
     async def on_command_error(ctx, error):
         if isinstance(error, commands.CommandNotFound):
-            await ctx.send("Comando no encontrado.")
+            await ctx.send("Comando no encontrado")
