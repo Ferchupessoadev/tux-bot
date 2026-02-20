@@ -49,7 +49,8 @@ def setup_commands(bot: commands.Bot, config):
 
     @bot.command(help="la morena")
     async def morena(ctx):
-        file = discord.File("./grok-video-quieres ver el directo conmigo - 4.mp4", filename="morena.mp4")
+        file = discord.File(
+            "./grok-video-quieres ver el directo conmigo - 4.mp4", filename="morena.mp4")
 
         embed = discord.Embed(
             title="La morena(mi otra novia que no se entere la rubia)",

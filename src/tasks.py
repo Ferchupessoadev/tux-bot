@@ -6,7 +6,7 @@ from utils_youtube import get_latest_video_link
 def setup_tasks(bot, config):
     bot.last_video_link = None
 
-    @tasks.loop(minutes=5)
+    @tasks.loop(minutes=3)
     async def cron_job_youtube():
         channel = bot.get_channel(int(config["CHANNEL_ID_YOUTUBE_DISCORD"]))
         if not channel:
@@ -29,7 +29,7 @@ def setup_tasks(bot, config):
                 "**🎥 Nuevo video:**\n"
                 f"Titulo: {data['snippet']['title']}\n"
                 "Tag: ||@everyone|| ||@here||\n\n"
-                f"**[Haz click aquí para ver el video({link})**"
+                f"**[Haz click aquí para ver el video]({link})**"
             )
 
     @cron_job_youtube.before_loop
